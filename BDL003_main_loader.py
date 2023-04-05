@@ -112,11 +112,14 @@ def load_hasbook_edges(config):
 def start_bulk_data_loader(config):
     #create processes for vertices, load vertices first, then edges
     investor_vertex_process = mp.Process(target=load_investor_vertices,args=(config,))
+
+    investor_vertex_process.start()
+    investor_vertex_process.join()
+
     tradebook_vertex_process = mp.Process(target=load_tradebook_vertices,args=(config,))
     company_vertex_process = mp.Process(target=load_company_vertices,args=(config,))
     fs_vertex_process = mp.Process(target=load_freshness_score_vertices,args=(config,))
 
-    investor_vertex_process.start()
     tradebook_vertex_process.start()
     company_vertex_process.start()
     fs_vertex_process.start()
@@ -127,7 +130,6 @@ def start_bulk_data_loader(config):
     hasbook_edge_process = mp.Process(target=load_hasbook_edges,args=(config,))
     #start edge loading after vertices
 
-    investor_vertex_process.join()
     tradebook_vertex_process.join()
     company_vertex_process.join()
     fs_vertex_process.join()
